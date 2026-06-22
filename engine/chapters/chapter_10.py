@@ -1,0 +1,81 @@
+"""Shadow - Chapter 10: Terrain"""
+
+def CHAPTER_10_RULES():
+    return [
+        # ── THE SIX KINDS OF TERRAIN ──
+        ("1. Ground may be classified according to its nature as: accessible, entangling, temporizing, narrow passes, steep heights, and positions at a great distance from the enemy", 
+         lambda e: "PRO" if e.get("pitch_condition","good") == "good" else "NEUTRAL"),
+        ("2. Accessible ground: both can move freely — be first to occupy high points and secure supply routes", 
+         lambda e1,e2: "PRO" if e1.get("home_away","") == "home" and e1.get("supply_line",5) > 5 else "NEUTRAL"),
+        ("3. Entangling ground: easy to enter but hard to leave — if the enemy is unprepared, attack", 
+         lambda e1,e2: "PRO" if e2.get("preparation",5) < 4 and e1.get("energy",50) > 60 else "NEUTRAL"),
+        ("4. If the enemy is prepared on entangling ground, do not attack", 
+         lambda e1,e2: "CON" if e2.get("preparation",5) > 6 else "NEUTRAL"),
+        ("5. Temporizing ground: neither should move first — lure the enemy out, then strike", 
+         lambda e1,e2: "PRO" if e1.get("counter_attack",0) > e2.get("counter_attack",0) else "NEUTRAL"),
+        ("6. Narrow passes: occupy first and block — if enemy occupies, do not pursue", 
+         lambda e1,e2: "CON" if e2.get("capacity",0) > e1.get("capacity",0)*1.5 else "NEUTRAL"),
+        ("7. Steep heights: occupy the sunny side and wait — do not climb to attack", 
+         lambda e1,e2: "PRO" if e1.get("altitude",0) > e2.get("altitude",0) else "NEUTRAL"),
+        ("8. Great distance from enemy: if strength is equal, do not provoke battle", 
+         lambda e1,e2: "CON" if e1.get("travel_distance",0) > 3000 and abs(e1.get("strength",5)-e2.get("strength",5)) < 2 else "NEUTRAL"),
+        
+        # ── THE SIX WAYS TO COURT DEFEAT ──
+        ("9. Flight: when one army is equal to ten of the enemy's but the general is weak", 
+         lambda e: "CON" if e.get("manager_quality",5) < 4 and e.get("strength",5) > 6 else "NEUTRAL"),
+        ("10. Insubordination: when soldiers are strong but officers weak", 
+         lambda e: "CON" if e.get("discipline",5) < 4 and e.get("morale",5) > 6 else "NEUTRAL"),
+        ("11. Collapse: when officers are strong but soldiers weak", 
+         lambda e: "CON" if e.get("discipline",5) > 7 and e.get("team_harmony",5) < 4 else "NEUTRAL"),
+        ("12. Ruin: when higher officers are angry and insubordinate", 
+         lambda e: "CON" if e.get("manager_quality",5) < 5 and e.get("discipline",5) < 5 else "NEUTRAL"),
+        ("13. Disorganization: when the general is weak and without authority", 
+         lambda e: "CON" if e.get("manager_quality",5) < 4 and e.get("organization",5) < 4 else "NEUTRAL"),
+        ("14. Rout: when the general fails to estimate the enemy's strength", 
+         lambda e: "CON" if e.get("intelligence",5) < 4 and e.get("preparation",5) < 4 else "NEUTRAL"),
+        ("15. These six are the ways to court defeat — the general must study them carefully", 
+         lambda e: "PRO" if e.get("intelligence",5) > 6 else "NEUTRAL"),
+        
+        # ── THE GENERAL AND TERRAIN ──
+        ("16. The natural formation of the country is the soldier's best ally", 
+         lambda e: "PRO" if e.get("home_away","") == "home" and e.get("pitch_condition","good") == "good" else "NEUTRAL"),
+        ("17. A power of estimating the adversary, of controlling the forces of victory, and of shrewdly calculating difficulties is the mark of a great general", 
+         lambda e: "PRO" if e.get("manager_quality",5) > 7 and e.get("intelligence",5) > 7 else "NEUTRAL"),
+        ("18. He who knows these things and puts them into practice will gain victory", 
+         lambda e: "PRO" if e.get("intelligence",5) > 6 and e.get("preparation",5) > 6 else "NEUTRAL"),
+        ("19. He who knows them not, nor practices them, will surely be defeated", 
+         lambda e: "CON" if e.get("intelligence",5) < 4 else "NEUTRAL"),
+        ("20. If fighting is sure to result in victory, you must fight — even against the ruler's orders", 
+         lambda e: "PRO" if e.get("strength",5) > 7 and e.get("manager_quality",5) > 7 else "NEUTRAL"),
+        ("21. If fighting will not result in victory, you must not fight — even at the ruler's command", 
+         lambda e1,e2: "CON" if e2.get("strength",5) > e1.get("strength",5)*1.5 else "NEUTRAL"),
+        ("22. The general who advances without coveting fame and retreats without fearing disgrace", 
+         lambda e: "PRO" if e.get("manager_quality",5) > 7 and e.get("discipline",5) > 6 else "NEUTRAL"),
+        ("23. Whose only thought is to protect his country and serve his sovereign", 
+         lambda e: "PRO" if e.get("team_harmony",5) > 6 else "NEUTRAL"),
+        ("24. He is the jewel of the kingdom", 
+         lambda e: "PRO" if e.get("manager_quality",5) > 8 else "NEUTRAL"),
+        ("25. Regard your soldiers as your children and they will follow you into the deepest valleys", 
+         lambda e: "PRO" if e.get("team_harmony",5) > 7 and e.get("morale",5) > 7 else "NEUTRAL"),
+        ("26. Look upon them as your own beloved sons and they will stand by you unto death", 
+         lambda e: "PRO" if e.get("team_harmony",5) > 8 else "NEUTRAL"),
+        ("27. If you are indulgent but unable to make your authority felt", 
+         lambda e: "CON" if e.get("discipline",5) < 4 and e.get("team_harmony",5) > 7 else "NEUTRAL"),
+        ("28. Your soldiers will be like spoiled children — useless for any practical purpose", 
+         lambda e: "CON" if e.get("discipline",5) < 3 else "NEUTRAL"),
+        ("29. If you know your troops can attack but do not know the enemy is invulnerable", 
+         lambda e: "CON" if e.get("preparation",5) > 6 and e.get("intelligence",5) < 4 else "NEUTRAL"),
+        ("30. If you know the enemy can be attacked but do not know your troops cannot attack", 
+         lambda e: "CON" if e.get("intelligence",5) > 5 and e.get("strength",5) < 5 else "NEUTRAL"),
+        ("31. If you know both yourself and the enemy, victory will be assured", 
+         lambda e1,e2: "PRO" if e1.get("intelligence",5) > e2.get("intelligence",5) and e1.get("strength",5) > e2.get("strength",5) else "CON" if e2.get("intelligence",5) > e1.get("intelligence",5) and e2.get("strength",5) > e1.get("strength",5) else "NEUTRAL"),
+        ("32. Know the enemy, know yourself, and your victory will not be threatened", 
+         lambda e1,e2: "PRO" if e1.get("intelligence",5) > e2.get("intelligence",5)+1 else "NEUTRAL"),
+        ("33. Know the ground, know the weather, and your victory will be total", 
+         lambda e: "PRO" if e.get("pitch_condition","good") == "good" and e.get("weather","") in ["Clear","Cloudy"] else "NEUTRAL"),
+    ]
+
+
+if __name__ == "__main__":
+    rules = CHAPTER_10_RULES()
+    print(f"Chapter 10: {len(rules)} principles loaded")
