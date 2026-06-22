@@ -1,0 +1,204 @@
+"""
+Sun Tzu Oracle - Universal Battlefield Class
+Domain-agnostic competitive environment.
+"""
+
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Optional
+from datetime import datetime
+
+
+class GroundType(Enum):
+    """Sun Tzu's classification of terrain (Chapters 10 & 11)."""
+    ACCESSIBLE = "accessible"           # Both can move freely
+    ENTANGLING = "entangling"           # Easy to enter, hard to leave
+    TEMPORIZING = "temporizing"         # Neither should move first
+    NARROW_PASSES = "narrow_passes"     # Constricted terrain
+    STEEP_HEIGHTS = "steep_heights"     # High ground advantage
+    DISPERSIVE = "dispersive"           # Fighting in own territory (homesick)
+    FRONTIER = "frontier"               # Shallow enemy territory
+    CONTENTIOUS = "contentious"         # Advantageous to both, contested
+    OPEN = "open"                       # Either can advance freely
+    INTERSECTING = "intersecting"       # Crossroads of strategic value
+    SERIOUS = "serious"                 # Deep in enemy territory
+    DIFFICULT = "difficult"             # Rough terrain, slow movement
+    FATAL = "fatal"                     # Only way out is through destruction
+    DESPERATE = "desperate"             # No retreat, fight or die
+
+
+class TerrainFeature(Enum):
+    """Physical or market features that affect strategy."""
+    RIVER = "river"                     # Obstacle to cross
+    MOUNTAIN = "mountain"               # High ground, defensive
+    FOREST = "forest"                   # Concealment, ambush
+    PLAIN = "plain"                     # Open, no advantage
+    SWAMP = "swamp"                     # Slows movement, exhausts
+    WALL = "wall"                       # Fortified position
+    CORRIDOR = "corridor"              # Single path, predictable
+    FOG = "fog"                         # Obscured vision, uncertainty
+
+
+class HeavenCondition(Enum):
+    """Environmental/timing conditions (Heaven factor)."""
+    CLEAR = "clear"                     # Full visibility, good timing
+    RAIN = "rain"                       # Slowed progress
+    WIND_FAVORABLE = "wind_favorable"   # Momentum behind us
+    WIND_UNFAVORABLE = "wind_unfavorable" # Momentum against us
+    STORM = "storm"                     # Chaos, unpredictable
+    DROUGHT = "drought"                 # Resource scarcity
+    FOG_HEAVEN = "fog"                 # Uncertainty, poor intelligence
+    DAWN = "dawn"                       # New opportunity emerging
+    DUSK = "dusk"                       # Opportunity fading
+
+
+@dataclass
+class Battlefield:
+    """
+    Universal competitive environment.
+    
+    Trading: Market conditions, session, volatility
+    Business: Market landscape, regulations
+    War: Physical terrain, weather
+    Any domain: The space where competition happens.
+    """
+    
+    name: str = "Unnamed Battlefield"
+    ground_type: GroundType = GroundType.ACCESSIBLE
+    features: list = field(default_factory=list)
+    heaven_condition: HeavenCondition = HeavenCondition.CLEAR
+    
+    # Environmental modifiers (-1.0 to 1.0)
+    attacker_advantage: float = 0.0    # Positive = attacker favored
+    defender_advantage: float = 0.0    # Positive = defender favored
+    deception_bonus: float = 0.0       # How much deception is amplified
+    
+    # Dynamic conditions
+    volatility: float = 0.5           # 0-1: Stability of environment
+    resource_density: float = 0.5     # 0-1: Available resources
+    fog_of_war: float = 0.3           # 0-1: Hidden information level
+    time_pressure: float = 0.0        # 0-1: Urgency to act
+    
+    # Domain-specific data
+    domain: str = "general"
+    domain_data: dict = field(default_factory=dict)
+    timestamp: datetime = field(default_factory=datetime.now)
+    
+    def get_strategic_multiplier(self, is_attacker: bool) -> float:
+        """
+        Calculate how the terrain affects a given role.
+        Positive = advantage, Negative = disadvantage.
+        """
+        base = 1.0
+        
+        # Ground type effects
+        if self.ground_type == GroundType.STEEP_HEIGHTS:
+            base += (0.3 if not is_attacker else -0.3)
+        elif self.ground_type == GroundType.NARROW_PASSES:
+            base += (0.2 if not is_attacker else -0.2)
+        elif self.ground_type == GroundType.OPEN:
+            base += (0.1 if is_attacker else -0.1)
+        elif self.ground_type == GroundType.DESPERATE:
+            base += 0.4  # Both sides fight harder
+        elif self.ground_type == GroundType.FATAL:
+            base += 0.5 if not is_attacker else -0.1
+        
+        # Feature effects
+        if TerrainFeature.MOUNTAIN in self.features:
+            base += 0.25 if not is_attacker else -0.25
+        if TerrainFeature.SWAMP in self.features:
+            base -= 0.2 if is_attacker else 0.0
+        if TerrainFeature.FOG in self.features:
+            base += self.deception_bonus
+        
+        # Heaven effects
+        if self.heaven_condition == HeavenCondition.WIND_FAVORABLE and is_attacker:
+            base += 0.2
+        if self.heaven_condition == HeavenCondition.WIND_UNFAVORABLE and is_attacker:
+            base -= 0.2
+        if self.heaven_condition == HeavenCondition.STORM:
+            base -= 0.15  # Chaos hurts everyone, but attackers more
+        
+        # General modifiers
+        base += self.attacker_advantage if is_attacker else self.defender_advantage
+        
+        return max(-0.5, min(0.5, base - 1.0))  # Clamp to range
+    
+    def recommend_ground_strategy(self) -> str:
+        """What does the terrain demand?"""
+        strategies = {
+            GroundType.ACCESSIBLE: "Occupy high ground first. Secure supply lines.",
+            GroundType.ENTANGLING: "Do not enter unless you can finish quickly.",
+            GroundType.TEMPORIZING: "Do not attack first. Lure the enemy out.",
+            GroundType.NARROW_PASSES: "Occupy first and block. If enemy occupies, do not pursue.",
+            GroundType.STEEP_HEIGHTS: "Occupy the sunny side. Do not climb to attack.",
+            GroundType.DISPERSIVE: "Do not fight. Rally your army's unity first.",
+            GroundType.CONTENTIOUS: "Do not attack if enemy holds it. Race to occupy if empty.",
+            GroundType.DESPERATE: "Fight immediately. There is no other option.",
+            GroundType.FATAL: "Create an escape path before engaging.",
+        }
+        return strategies.get(self.ground_type, "Assess carefully before acting.")
+    
+    def to_dict(self) -> dict:
+        """Export battlefield state."""
+        return {
+            "name": self.name,
+            "ground_type": self.ground_type.value,
+            "features": [f.value for f in self.features],
+            "heaven_condition": self.heaven_condition.value,
+            "attacker_advantage": self.attacker_advantage,
+            "defender_advantage": self.defender_advantage,
+            "deception_bonus": self.deception_bonus,
+            "volatility": self.volatility,
+            "fog_of_war": self.fog_of_war,
+            "time_pressure": self.time_pressure,
+            "strategy": self.recommend_ground_strategy(),
+            "domain": self.domain
+        }
+
+
+# ─── Test ──────────────────────────────────────────────────
+if __name__ == "__main__":
+    from army import Army, Commander, ArmyType, MoralState
+    
+    # Create battlefield
+    field = Battlefield(
+        name="Gold Market - Asian Session",
+        ground_type=GroundType.CONTENTIOUS,
+        features=[TerrainFeature.FOG],
+        heaven_condition=HeavenCondition.DAWN,
+        volatility=0.4,
+        fog_of_war=0.6,
+        time_pressure=0.3,
+        domain="trading"
+    )
+    
+    # Create two armies
+    attacker = Army(
+        name="Golden Dragon Fund",
+        army_type=ArmyType.AGGRESSOR,
+        moral_score=8.0,
+        commander=Commander(8,7,7,8,9),
+    )
+    
+    defender = Army(
+        name="Market Makers",
+        army_type=ArmyType.DEFENDER,
+        moral_score=5.0,
+        commander=Commander(7,4,3,8,6),
+    )
+    
+    print("═" * 60)
+    print(f"BATTLEFIELD: {field.name}")
+    print(f"Ground: {field.ground_type.value.upper()}")
+    print(f"Heaven: {field.heaven_condition.value}")
+    print(f"Fog of War: {field.fog_of_war:.0%}")
+    print(f"Features: {[f.value for f in field.features]}")
+    
+    print("\n" + "─" * 60)
+    print(f"Attacker ({attacker.name}) terrain modifier: {field.get_strategic_multiplier(True):+.0%}")
+    print(f"Defender ({defender.name}) terrain modifier: {field.get_strategic_multiplier(False):+.0%}")
+    
+    print("\n" + "─" * 60)
+    print(f"TERRAIN STRATEGY: {field.recommend_ground_strategy()}")
+    print("═" * 60)
