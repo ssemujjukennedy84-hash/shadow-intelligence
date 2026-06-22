@@ -1,0 +1,17 @@
+﻿services:
+  - type: web
+    name: shadow-intelligence
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn shadow_web:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: NEWSAPI_KEY
+        sync: false
+      - key: FOOTBALL_KEY
+        sync: false
+      - key: FOOTBALL_DATA_KEY
+        sync: false
