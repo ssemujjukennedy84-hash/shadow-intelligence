@@ -2,8 +2,8 @@
 Flask-CORS==4.0.0
 requests==2.31.0
 yfinance==0.2.33
-pandas==2.1.4
-numpy==1.26.2
+pandas==1.5.3
+numpy==1.23.5
 python-dotenv==1.0.0
 feedparser==6.0.10
 newsapi-python==0.2.7
