@@ -1,0 +1,23 @@
+[
+  {
+    "league": "Premier League",
+    "season": "2023",
+    "total": 380,
+    "correct": 175,
+    "accuracy": 46.05263157894737
+  },
+  {
+    "league": "Premier League",
+    "season": "2024",
+    "total": 380,
+    "correct": 155,
+    "accuracy": 40.78947368421053
+  },
+  {
+    "league": "Premier League",
+    "season": "2025",
+    "total": 380,
+    "correct": 162,
+    "accuracy": 42.63157894736842
+  }
+]

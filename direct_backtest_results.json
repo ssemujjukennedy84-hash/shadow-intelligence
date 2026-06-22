@@ -1,0 +1,32 @@
+[
+  {
+    "league": "Premier League",
+    "total": 380,
+    "correct": 193,
+    "accuracy": 50.78947368421053
+  },
+  {
+    "league": "La Liga",
+    "total": 380,
+    "correct": 192,
+    "accuracy": 50.526315789473685
+  },
+  {
+    "league": "Bundesliga",
+    "total": 306,
+    "correct": 167,
+    "accuracy": 54.57516339869281
+  },
+  {
+    "league": "Serie A",
+    "total": 380,
+    "correct": 189,
+    "accuracy": 49.73684210526316
+  },
+  {
+    "league": "Ligue 1",
+    "total": 305,
+    "correct": 158,
+    "accuracy": 51.80327868852459
+  }
+]

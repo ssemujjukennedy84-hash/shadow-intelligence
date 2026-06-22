@@ -1,0 +1,32 @@
+[
+  {
+    "league": "EPL",
+    "total": 0,
+    "correct": 0,
+    "accuracy": 0
+  },
+  {
+    "league": "LALIGA",
+    "total": 0,
+    "correct": 0,
+    "accuracy": 0
+  },
+  {
+    "league": "BUNDESLIGA",
+    "total": 0,
+    "correct": 0,
+    "accuracy": 0
+  },
+  {
+    "league": "SERIEA",
+    "total": 0,
+    "correct": 0,
+    "accuracy": 0
+  },
+  {
+    "league": "LIGUE1",
+    "total": 0,
+    "correct": 0,
+    "accuracy": 0
+  }
+]
